@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Resource extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'type', 'title', 'description', 'provider_name', 'url', 'contact_info',
         'deadline', 'target_dimensions', 'min_semester', 'max_semester', 'eligible_majors', 'is_active'
