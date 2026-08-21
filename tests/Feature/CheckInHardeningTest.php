@@ -30,9 +30,10 @@ class CheckInHardeningTest extends TestCase
             $response->assertStatus(302);
         }
 
-        // 4th request should be 429 Too Many Requests
+        // 4th request should redirect with flash message
         $response = $this->actingAs($user)->post('/check-in', $payload);
-        $response->assertStatus(429);
+        $response->assertRedirect();
+        $response->assertSessionHas('error', 'Permintaan Anda sedang diproses, mohon tunggu sebentar sebelum mencoba lagi.');
     }
 
     public function test_atomic_lock_prevents_concurrent_submissions()

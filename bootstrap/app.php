@@ -20,4 +20,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
+
+        $exceptions->render(function (\Illuminate\Http\Exceptions\ThrottleRequestsException $e, Request $request) {
+            if ($request->routeIs('check-in.store', 'results.chat')) {
+                return redirect()->back()->with('error', 'Permintaan Anda sedang diproses, mohon tunggu sebentar sebelum mencoba lagi.');
+            }
+        });
     })->create();

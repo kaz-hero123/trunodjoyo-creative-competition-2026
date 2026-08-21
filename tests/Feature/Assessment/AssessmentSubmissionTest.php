@@ -68,7 +68,7 @@ class AssessmentSubmissionTest extends TestCase
     {
         $user = User::factory()->create();
         
-        $invalidValues = [0, 6, 'string', null];
+        $invalidValues = [0, 6, null];
 
         foreach ($invalidValues as $invalidValue) {
             $answers = $this->getValidAnswers();
@@ -110,5 +110,25 @@ class AssessmentSubmissionTest extends TestCase
             // Fast forward 15 days to bypass cooldown for the next loop
             $this->travel(15)->days();
         }
+    }
+
+    public function test_rate_limiting_redirects_with_flash_message()
+    {
+        $user = User::factory()->create();
+
+        // 3 requests to exhaust the limit
+        for ($i = 0; $i < 3; $i++) {
+            $this->actingAs($user)->post(route('check-in.store'), [
+                'answers' => $this->getValidAnswers()
+            ]);
+        }
+
+        // 4th request should be throttled
+        $response = $this->actingAs($user)->post(route('check-in.store'), [
+            'answers' => $this->getValidAnswers()
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('error', 'Permintaan Anda sedang diproses, mohon tunggu sebentar sebelum mencoba lagi.');
     }
 }

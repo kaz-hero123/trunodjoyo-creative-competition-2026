@@ -63,8 +63,10 @@ class AssessmentCooldownTest extends TestCase
             'user_id' => $user->id,
             'raw_answers' => $this->getValidAnswers(),
             'score_academic' => 10, 'score_financial' => 10, 'score_motivational' => 10, 'score_social' => 10, 'total_resilience_score' => 10,
-            'created_at' => now()->subDays(14)
         ]);
+        $assessment->timestamps = false;
+        $assessment->created_at = now()->subDays(14);
+        $assessment->save();
 
         // Attempt new assessment exactly 14 days later
         $response = $this->actingAs($user)->post('/check-in', [
@@ -79,12 +81,14 @@ class AssessmentCooldownTest extends TestCase
     {
         $user = User::factory()->create();
 
-        Assessment::create([
+        $assessment = Assessment::create([
             'user_id' => $user->id,
             'raw_answers' => $this->getValidAnswers(),
             'score_academic' => 10, 'score_financial' => 10, 'score_motivational' => 10, 'score_social' => 10, 'total_resilience_score' => 10,
-            'created_at' => now()->subDays(15)
         ]);
+        $assessment->timestamps = false;
+        $assessment->created_at = now()->subDays(15);
+        $assessment->save();
 
         $response = $this->actingAs($user)->post('/check-in', [
             'answers' => $this->getValidAnswers()

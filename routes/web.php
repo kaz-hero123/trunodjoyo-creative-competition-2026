@@ -28,7 +28,9 @@ Route::middleware(['auth', 'student'])->group(function () {
         ->middleware('throttle:check-in');
     
     Route::get('/results/{assessment}', [AssessmentController::class, 'show'])->name('results.show');
-    Route::post('/results/{assessment}/chat', [AssessmentController::class, 'chat'])->name('results.chat');
+    Route::post('/results/{assessment}/chat', [AssessmentController::class, 'chat'])
+        ->name('results.chat')
+        ->middleware('throttle:chat-advisor');
     
     Route::get('/resources', [ResourceController::class, 'index'])->name('resources.index');
     Route::post('/resource-matches/{match}/click', [ResourceController::class, 'recordClick'])->name('resources.click');
