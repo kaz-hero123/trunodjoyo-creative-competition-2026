@@ -8,7 +8,8 @@ class Assessment extends Model
 {
     protected $fillable = [
         'user_id', 'raw_answers', 'score_academic', 'score_financial', 
-        'score_motivational', 'score_social', 'total_resilience_score'
+        'score_motivational', 'score_social', 'total_resilience_score',
+        'is_baseline'
     ];
 
     protected function casts(): array
@@ -20,6 +21,7 @@ class Assessment extends Model
             'score_motivational' => 'decimal:2',
             'score_social' => 'decimal:2',
             'total_resilience_score' => 'decimal:2',
+            'is_baseline' => 'boolean',
         ];
     }
 

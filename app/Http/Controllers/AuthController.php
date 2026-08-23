@@ -8,6 +8,7 @@ class AuthController extends Controller {
     public function showRegister() { return view('auth.register'); }
     public function register(Request $request) {
         $validated = $request->validate([
+            'name' => 'nullable|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
             'semester' => 'required|integer|between:1,14',

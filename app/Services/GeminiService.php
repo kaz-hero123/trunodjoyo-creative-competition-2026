@@ -14,6 +14,17 @@ class GeminiService
         'overdosis', 'hopeless', 'suicide'
     ];
 
+    /**
+     * Best-effort pattern matching untuk mencegah kebocoran diagnosis medis.
+     * Ini bukan jaminan mutlak, melainkan penahan wajib untuk klaim yang paling jelas.
+     */
+    private const DIAGNOSIS_KEYWORDS = [
+        'didiagnosis', 'anda menderita', 'kamu menderita', 'gangguan jiwa',
+        'schizophrenia', 'bipolar', 'skizofrenia', 'gangguan kecemasan', 
+        'adhd', 'autisme', 'clinical depression', 'depresi klinis',
+        'mengalami ptsd', 'post-traumatic stress', 'mayor depressive', 'depressive disorder'
+    ];
+
     private const EMERGENCY_RESPONSE = "Saya mengerti kamu sedang berada di situasi yang sangat berat. Keselamatanmu adalah yang utama. Sistem ini bukan untuk penanganan krisis. Mohon segera hubungi layanan darurat psikologi 24 jam gratis di 119 (ext. 8) atau kunjungi healing119.id. Kamu juga dapat menghubungi Pusat Konseling UTM untuk pendampingan lebih lanjut. Kamu tidak sendirian.";
 
     private const FALLBACK_RESPONSE = "Terima kasih sudah berbagi. Sistem saya sedang sibuk, namun tetap perhatikan daftar bantuan kampus di bawah yang mungkin bisa membantumu.";
@@ -39,7 +50,7 @@ class GeminiService
         $systemPrompt = $this->buildSystemPrompt($weakestDimension);
 
         // 5. Panggil Gemini API
-        return $this->callGeminiApi($systemPrompt, $history);
+        return $this->callGeminiApi($systemPrompt, $history, $assessment->user);
     }
 
     private function containsEmergencyKeywords(string $text): bool
@@ -83,16 +94,18 @@ Pengguna sedang membahas masalah pada aspek terlemah mereka berdasarkan kuesione
 Gunakan riwayat percakapan sebelumnya untuk memahami konteks.
 Keluarkan HANYA JSON valid sesuai schema berikut:
 {
-  "advisor_response": "pesan balasan Anda di sini"
+  "advisor_response": "pesan balasan Anda di sini",
+  "contains_clinical_claim": true/false
 }
 Berikan saran rasional, praktis, dan akademis pada field "advisor_response".
 DILARANG memberikan diagnosis medis, nasihat klinis, prediksi dropout, atau janji finansial.
 Jika pengguna menunjukkan indikasi darurat terkait kesehatan mental (seperti ideasi bunuh diri atau depresi berat), jangan melakukan diagnosis. Tampilkan batasan layanan serta arahkan untuk menghubungi layanan darurat setempat atau layanan konseling kampus resmi.
 Jangan mengubah, menghitung, atau menafsirkan ulang skor, status, eligibility, maupun pemilihan resource.
+PENTING: Isi field "contains_clinical_claim" dengan nilai true HANYA JIKA "advisor_response" yang Anda buat mengandung klaim, vonis, diagnosis, atau bahasa yang menyiratkan penilaian medis/psikologis klinis. Jika tidak, isi dengan false.
 PROMPT;
     }
 
-    private function callGeminiApi(string $systemPrompt, array $history): array
+    private function callGeminiApi(string $systemPrompt, array $history, ?\App\Models\User $user): array
     {
         $apiKey = config('services.gemini.api_key');
         $model = config('services.gemini.model', 'gemini-3.1-flash-lite');
@@ -103,12 +116,14 @@ PROMPT;
             return ['advisor_response' => self::FALLBACK_RESPONSE];
         }
 
-        // Format history ke format Gemini API
+        // Format history ke format Gemini API dengan sanitasi PII
         $contents = [];
         foreach ($history as $msg) {
+            $sanitizedMessage = $this->sanitizePII($msg['message'], $user);
+            
             $contents[] = [
                 'role' => $msg['role'], // Enum kita 'user' / 'ai', Gemini menerima 'user' / 'model'
-                'parts' => [['text' => $msg['message']]]
+                'parts' => [['text' => $sanitizedMessage]]
             ];
             // Ubah 'ai' menjadi 'model' sesuai spec Gemini API
             if (end($contents)['role'] === 'ai') {
@@ -139,7 +154,16 @@ PROMPT;
                 // Parse JSON dari text
                 $json = json_decode($text, true);
                 if (json_last_error() === JSON_ERROR_NONE && isset($json['advisor_response'])) {
-                    return ['advisor_response' => $json['advisor_response']];
+                    $advisorResponse = $json['advisor_response'];
+                    $containsClinicalClaim = $json['contains_clinical_claim'] ?? false;
+
+                    // 6. Post-filter validasi diagnosis medis (Lapis 3)
+                    if ($containsClinicalClaim === true || $this->containsDiagnosisKeywords($advisorResponse)) {
+                        Log::warning('Gemini API output rejected due to medical diagnosis claim', ['text' => $advisorResponse]);
+                        return ['advisor_response' => self::FALLBACK_RESPONSE];
+                    }
+
+                    return ['advisor_response' => $advisorResponse];
                 }
                 
                 Log::warning('Gemini API returned invalid JSON format', ['text' => $text]);
@@ -151,5 +175,35 @@ PROMPT;
         }
 
         return ['advisor_response' => self::FALLBACK_RESPONSE];
+    }
+
+    private function containsDiagnosisKeywords(string $text): bool
+    {
+        $lowerText = strtolower($text);
+        foreach (self::DIAGNOSIS_KEYWORDS as $keyword) {
+            if (str_contains($lowerText, $keyword)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Best-effort PII sanitization.
+     * Menggunakan regex untuk email dan str_ireplace untuk nama lengkap.
+     * Ini bukan jaminan absolut karena tidak menangkap semua variasi ketik/identitas,
+     * konsisten dengan pendekatan best-effort Lapis 1 & 2.
+     */
+    private function sanitizePII(string $text, ?\App\Models\User $user): string
+    {
+        // 1. Strip pola email standar
+        $text = preg_replace('/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/', '[dihapus]', $text);
+        
+        // 2. Strip kemunculan nama user (case-insensitive)
+        if ($user && !empty($user->name)) {
+            $text = str_ireplace($user->name, '[dihapus]', $text);
+        }
+
+        return $text;
     }
 }

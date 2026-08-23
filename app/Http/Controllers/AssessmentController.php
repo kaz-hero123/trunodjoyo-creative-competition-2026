@@ -19,7 +19,11 @@ class AssessmentController extends Controller {
         if ($latest && $latest->created_at->diffInDays(now()) < 14) {
             return redirect()->route('dashboard')->with('error', 'Check-in berikutnya tersedia setelah 14 hari.');
         }
-        $questionsByDimension = collect(AssessmentQuestions::getQuestions())->groupBy('dimension');
+        $questions = AssessmentQuestions::getQuestions();
+        $questionsByDimension = [];
+        foreach ($questions as $key => $q) {
+            $questionsByDimension[$q['dimension']][$key] = $q;
+        }
         $nextCheckInAt = $latest ? $latest->created_at->addDays(14) : null;
         return view('student.check-in', compact('questionsByDimension', 'nextCheckInAt'));
     }
@@ -44,6 +48,8 @@ class AssessmentController extends Controller {
             $assessment = DB::transaction(function() use ($user, $answers, $scoringService, $matchingService) {
                 $scores = $scoringService->calculateScore($answers);
                 
+                $isBaseline = !$user->assessments()->exists();
+
                 $assessment = $user->assessments()->create([
                     'raw_answers' => $answers,
                     'score_academic' => $scores['academic'],
@@ -51,6 +57,7 @@ class AssessmentController extends Controller {
                     'score_motivational' => $scores['motivational'],
                     'score_social' => $scores['social'],
                     'total_resilience_score' => $scores['total'],
+                    'is_baseline' => $isBaseline,
                 ]);
                 
                 $matches = $matchingService->match($user, $assessment);
