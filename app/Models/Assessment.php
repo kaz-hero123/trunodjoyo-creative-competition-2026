@@ -30,11 +30,6 @@ class Assessment extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function matches()
-    {
-        return $this->hasMany(ResourceMatch::class);
-    }
-
     public function dimensionStatus(string $dimension): string
     {
         $scoreField = 'score_' . $dimension;
