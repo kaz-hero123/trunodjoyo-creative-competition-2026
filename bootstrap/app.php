@@ -13,6 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
+            'streak' => \App\Http\Middleware\TrackDailyStreak::class,
             'student' => \App\Http\Middleware\EnsureStudent::class,
         ]);
     })

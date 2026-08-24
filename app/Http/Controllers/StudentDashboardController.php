@@ -7,9 +7,12 @@ class StudentDashboardController extends Controller {
         $assessments = $user->assessments()->latest()->get();
         $latestAssessment = $assessments->first();
         $assessmentHistory = $assessments;
-        $activeMatches = $latestAssessment ? $latestAssessment->matches()->with('resource')->get() : collect();
-        $nextCheckInAt = $latestAssessment ? $latestAssessment->created_at->addDays(14) : null;
+        $nextCheckInAt = $latestAssessment ? $latestAssessment->created_at->addDays(7) : null;
         
-        return view('student.dashboard', compact('latestAssessment', 'assessmentHistory', 'activeMatches', 'nextCheckInAt'));
+        $streak = $user->streak_count;
+        $notesCount = $user->notes()->count();
+        $recentQuizzes = $user->quizzes()->latest()->take(3)->get();
+        
+        return view('student.dashboard', compact('latestAssessment', 'assessmentHistory', 'nextCheckInAt', 'streak', 'notesCount', 'recentQuizzes'));
     }
 }
