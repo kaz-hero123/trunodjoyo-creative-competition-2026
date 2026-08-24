@@ -34,22 +34,17 @@ class GeminiService
      */
     public function chat(Assessment $assessment, array $history): array
     {
-        // 1. Dapatkan pesan terbaru (pesan user yang baru disubmit)
         $latestMessage = end($history);
         $userText = $latestMessage['role'] === 'user' ? $latestMessage['message'] : '';
 
-        // 2. Pre-filter indikasi darurat (Lapis 1)
         if ($this->containsEmergencyKeywords($userText)) {
             return ['advisor_response' => self::EMERGENCY_RESPONSE];
         }
 
-        // 3. Tentukan dimensi terlemah
         $weakestDimension = $this->getWeakestDimension($assessment);
 
-        // 4. Siapkan System Prompt (Lapis 2)
         $systemPrompt = $this->buildSystemPrompt($weakestDimension);
 
-        // 5. Panggil Gemini API
         return $this->callGeminiApi($systemPrompt, $history, $assessment->user);
     }
 
@@ -116,16 +111,14 @@ PROMPT;
             return ['advisor_response' => self::FALLBACK_RESPONSE];
         }
 
-        // Format history ke format Gemini API dengan sanitasi PII
         $contents = [];
         foreach ($history as $msg) {
             $sanitizedMessage = $this->sanitizePII($msg['message'], $user);
             
             $contents[] = [
-                'role' => $msg['role'], // Enum kita 'user' / 'ai', Gemini menerima 'user' / 'model'
+                'role' => $msg['role'],
                 'parts' => [['text' => $sanitizedMessage]]
             ];
-            // Ubah 'ai' menjadi 'model' sesuai spec Gemini API
             if (end($contents)['role'] === 'ai') {
                 $contents[count($contents)-1]['role'] = 'model';
             }
@@ -151,13 +144,11 @@ PROMPT;
                 $data = $response->json();
                 $text = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';
                 
-                // Parse JSON dari text
                 $json = json_decode($text, true);
                 if (json_last_error() === JSON_ERROR_NONE && isset($json['advisor_response'])) {
                     $advisorResponse = $json['advisor_response'];
                     $containsClinicalClaim = $json['contains_clinical_claim'] ?? false;
 
-                    // 6. Post-filter validasi diagnosis medis (Lapis 3)
                     if ($containsClinicalClaim === true || $this->containsDiagnosisKeywords($advisorResponse)) {
                         Log::warning('Gemini API output rejected due to medical diagnosis claim', ['text' => $advisorResponse]);
                         return ['advisor_response' => self::FALLBACK_RESPONSE];
@@ -196,10 +187,8 @@ PROMPT;
      */
     private function sanitizePII(string $text, ?\App\Models\User $user): string
     {
-        // 1. Strip pola email standar
         $text = preg_replace('/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/', '[dihapus]', $text);
         
-        // 2. Strip kemunculan nama user (case-insensitive)
         if ($user && !empty($user->name)) {
             $text = str_ireplace($user->name, '[dihapus]', $text);
         }
@@ -234,7 +223,6 @@ PROMPT;
                 $result = $response->json();
                 $text = $result['candidates'][0]['content']['parts'][0]['text'] ?? '';
                 
-                // Bersihkan potensi markdown ```json ... ```
                 $text = preg_replace('/```json/i', '', $text);
                 $text = preg_replace('/```/', '', $text);
                 
