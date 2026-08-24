@@ -73,24 +73,24 @@ class ResilienceScoringServiceTest extends TestCase
         $assessment = new Assessment();
 
         // Boundary Perlu Perhatian (< 40)
-        $assessment->score_academic = 39.99;
+        $assessment->score_academic = '39.99';
         $this->assertEquals('Perlu Perhatian', $assessment->dimensionStatus('academic'));
 
-        $assessment->score_academic = 0;
+        $assessment->score_academic = '0';
         $this->assertEquals('Perlu Perhatian', $assessment->dimensionStatus('academic'));
 
         // Boundary Berkembang (40 - 69.99)
-        $assessment->score_academic = 40.00;
+        $assessment->score_academic = '40.00';
         $this->assertEquals('Berkembang', $assessment->dimensionStatus('academic'));
 
-        $assessment->score_academic = 69.99;
+        $assessment->score_academic = '69.99';
         $this->assertEquals('Berkembang', $assessment->dimensionStatus('academic'));
 
         // Boundary Kuat (>= 70)
-        $assessment->score_academic = 70.00;
+        $assessment->score_academic = '70.00';
         $this->assertEquals('Kuat', $assessment->dimensionStatus('academic'));
 
-        $assessment->score_academic = 100.00;
+        $assessment->score_academic = '100.00';
         $this->assertEquals('Kuat', $assessment->dimensionStatus('academic'));
     }
 
