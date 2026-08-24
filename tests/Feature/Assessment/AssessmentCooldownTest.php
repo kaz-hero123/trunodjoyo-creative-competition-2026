@@ -33,7 +33,7 @@ class AssessmentCooldownTest extends TestCase
         $response->assertRedirect();
     }
 
-    public function test_second_assessment_before_14_days_is_rejected()
+    public function test_second_assessment_before_7_days_is_rejected()
     {
         $user = User::factory()->create();
 
@@ -42,7 +42,7 @@ class AssessmentCooldownTest extends TestCase
             'answers' => $this->getValidAnswers()
         ]);
 
-        $this->travel(13)->days();
+        $this->travel(6)->days();
 
         // Second assessment
         $response = $this->actingAs($user)->post('/check-in', [
@@ -65,15 +65,15 @@ class AssessmentCooldownTest extends TestCase
             'score_academic' => 10, 'score_financial' => 10, 'score_motivational' => 10, 'score_social' => 10, 'total_resilience_score' => 10,
         ]);
         $assessment->timestamps = false;
-        $assessment->created_at = now()->subDays(14);
+        $assessment->created_at = now()->subDays(7);
         $assessment->save();
 
-        // Attempt new assessment exactly 14 days later
+        // Attempt new assessment exactly 7 days later
         $response = $this->actingAs($user)->post('/check-in', [
             'answers' => $this->getValidAnswers()
         ]);
 
-        // Should be allowed because diffInDays(now()) < 14 returns false when it's exactly 14 or more
+        // Should be allowed because diffInDays(now()) < 7 returns false when it's exactly 7 or more
         $this->assertDatabaseCount('assessments', 2);
     }
 
@@ -87,7 +87,7 @@ class AssessmentCooldownTest extends TestCase
             'score_academic' => 10, 'score_financial' => 10, 'score_motivational' => 10, 'score_social' => 10, 'total_resilience_score' => 10,
         ]);
         $assessment->timestamps = false;
-        $assessment->created_at = now()->subDays(15);
+        $assessment->created_at = now()->subDays(8);
         $assessment->save();
 
         $response = $this->actingAs($user)->post('/check-in', [

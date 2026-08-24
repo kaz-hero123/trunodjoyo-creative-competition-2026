@@ -13,9 +13,8 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
-    public function run(\App\Services\ResilienceScoringService $scoringService, \App\Services\ResourceMatchingService $matchingService): void
+    public function run(\App\Services\ResilienceScoringService $scoringService): void
     {
-        $this->seedResources();
 
         $user = User::updateOrCreate(
             ['email' => 'student@demo.com'],
@@ -55,18 +54,10 @@ class DatabaseSeeder extends Seeder
             'score_motivational' => $scores['motivational'],
             'score_social' => $scores['social'],
             'total_resilience_score' => $scores['total'],
-            'created_at' => now()->subDays(15),
-            'updated_at' => now()->subDays(15),
+            'created_at' => now()->subDays(8),
+            'updated_at' => now()->subDays(8),
         ]);
 
-        $matches = $matchingService->match($user, $assessment);
-        foreach ($matches as $match) {
-            \App\Models\ResourceMatch::create([
-                'assessment_id' => $assessment->id,
-                'resource_id' => $match->resource->id,
-                'match_reason' => $match->reason,
-            ]);
-        }
 
         \App\Models\AssessmentChat::create([
             'assessment_id' => $assessment->id,
@@ -77,42 +68,62 @@ class DatabaseSeeder extends Seeder
         \App\Models\AssessmentChat::create([
             'assessment_id' => $assessment->id,
             'role' => 'ai',
-            'message' => 'Saya mengerti ini situasi berat. Berdasarkan skor Anda, prioritas utama adalah mencari bantuan finansial. Silakan cek "Beasiswa Kurang Mampu FT" di daftar rekomendasi Anda.',
+            'message' => 'Saya mengerti ini situasi berat. Berdasarkan skor Anda, prioritas utama adalah mencari bantuan finansial.',
         ]);
-    }
 
-    private function seedResources(): void
-    {
-        $resources = [
-            // Financial (> 1)
-            ['title' => 'Beasiswa Kurang Mampu FT', 'type' => 'scholarship', 'description' => 'Bantuan UKT untuk mahasiswa Fakultas Teknik.', 'provider_name' => 'Fakultas Teknik', 'url' => 'https://ft.demo.ac.id/beasiswa', 'target_dimensions' => ['financial'], 'eligible_majors' => ['Informatika', 'Sistem Informasi'], 'min_semester' => 2, 'max_semester' => 8, 'is_active' => true, 'deadline' => now()->addDays(30)->toDateString()],
-            ['title' => 'Beasiswa Prestasi UTM', 'type' => 'scholarship', 'description' => 'Beasiswa untuk mahasiswa berprestasi dari semua fakultas.', 'provider_name' => 'Universitas Trunojoyo', 'url' => 'https://utm.demo.ac.id/prestasi', 'target_dimensions' => ['financial', 'academic'], 'eligible_majors' => null, 'min_semester' => 1, 'max_semester' => 8, 'is_active' => true, 'deadline' => now()->addDays(14)->toDateString()],
-            ['title' => 'Bantuan UKT Kemenag', 'type' => 'scholarship', 'description' => 'Bantuan UKT dari Kementerian Agama.', 'provider_name' => 'Kemenag', 'url' => 'https://kemenag.demo.id/bantuan', 'target_dimensions' => ['financial'], 'eligible_majors' => null, 'min_semester' => 3, 'max_semester' => 8, 'is_active' => true, 'deadline' => now()->addDays(10)->toDateString()],
-            ['title' => 'Program Magang Berbayar', 'type' => 'career', 'description' => 'Magang paruh waktu di unit rektorat.', 'provider_name' => 'Rektorat', 'url' => 'https://karir.demo.ac.id', 'target_dimensions' => ['financial', 'social'], 'eligible_majors' => null, 'min_semester' => 4, 'max_semester' => 8, 'is_active' => true, 'deadline' => null],
-            // Academic
-            ['title' => 'Klinik Pemrograman', 'type' => 'academic_support', 'description' => 'Bimbingan khusus untuk mata kuliah pemrograman dasar dan lanjut.', 'provider_name' => 'Lab Informatika', 'url' => 'https://lab.demo.ac.id/klinik', 'target_dimensions' => ['academic'], 'eligible_majors' => ['Informatika'], 'min_semester' => 1, 'max_semester' => 6, 'is_active' => true, 'deadline' => null],
-            ['title' => 'Kelas Tambahan Matematika', 'type' => 'academic_support', 'description' => 'Bimbingan kalkulus dan matematika diskrit.', 'provider_name' => 'Pusat Studi Matematika', 'url' => 'https://math.demo.ac.id', 'target_dimensions' => ['academic'], 'eligible_majors' => null, 'min_semester' => 1, 'max_semester' => 4, 'is_active' => true, 'deadline' => null],
-            ['title' => 'Workshop Penulisan Jurnal', 'type' => 'academic_support', 'description' => 'Pelatihan menulis publikasi ilmiah.', 'provider_name' => 'LPPM', 'url' => 'https://lppm.demo.ac.id', 'target_dimensions' => ['academic'], 'eligible_majors' => null, 'min_semester' => 5, 'max_semester' => 8, 'is_active' => true, 'deadline' => now()->addDays(20)->toDateString()],
-            ['title' => 'English Conversation Club', 'type' => 'community', 'description' => 'Latihan speaking bahasa Inggris rutin.', 'provider_name' => 'UPT Bahasa', 'url' => 'https://bahasa.demo.ac.id', 'target_dimensions' => ['academic', 'social'], 'eligible_majors' => null, 'min_semester' => 1, 'max_semester' => 8, 'is_active' => true, 'deadline' => null],
-            // Motivational
-            ['title' => 'Layanan Konseling Sebaya', 'type' => 'counseling', 'description' => 'Sesi curhat dengan peer counselor terlatih.', 'provider_name' => 'Pusat Bimbingan', 'url' => 'https://counseling.demo.ac.id', 'target_dimensions' => ['motivational', 'social'], 'eligible_majors' => null, 'min_semester' => 1, 'max_semester' => 8, 'is_active' => true, 'deadline' => null],
-            ['title' => 'Sesi Motivasi Alumni', 'type' => 'community', 'description' => 'Mentoring dari alumni sukses.', 'provider_name' => 'Ikatan Alumni', 'url' => 'https://alumni.demo.ac.id', 'target_dimensions' => ['motivational', 'academic'], 'eligible_majors' => null, 'min_semester' => 5, 'max_semester' => 8, 'is_active' => true, 'deadline' => now()->addDays(7)->toDateString()],
-            ['title' => 'Bimbingan Psikologis', 'type' => 'counseling', 'description' => 'Konseling psikolog profesional untuk kecemasan skripsi.', 'provider_name' => 'Klinik Psikologi', 'url' => 'https://klinik.demo.ac.id', 'target_dimensions' => ['motivational'], 'eligible_majors' => null, 'min_semester' => 7, 'max_semester' => 14, 'is_active' => true, 'deadline' => null],
-            ['title' => 'Healing & Mindfulness', 'type' => 'counseling', 'description' => 'Sesi meditasi dan manajemen stres mingguan.', 'provider_name' => 'Unit Kesehatan', 'url' => 'https://sehat.demo.ac.id', 'target_dimensions' => ['motivational'], 'eligible_majors' => null, 'min_semester' => 1, 'max_semester' => 8, 'is_active' => true, 'deadline' => null],
-            // Social
-            ['title' => 'UKM Seni Nanggala', 'type' => 'community', 'description' => 'Wadah mahasiswa berseni dan berbudaya.', 'provider_name' => 'Kemahasiswaan', 'url' => 'https://ukm.demo.ac.id/seni', 'target_dimensions' => ['social'], 'eligible_majors' => null, 'min_semester' => 1, 'max_semester' => 8, 'is_active' => true, 'deadline' => null],
-            ['title' => 'Relawan Mengajar Madura', 'type' => 'community', 'description' => 'Kegiatan sosial mengajar anak-anak pesisir.', 'provider_name' => 'BEM', 'url' => 'https://bem.demo.ac.id', 'target_dimensions' => ['social', 'motivational'], 'eligible_majors' => null, 'min_semester' => 1, 'max_semester' => 8, 'is_active' => true, 'deadline' => now()->addDays(5)->toDateString()],
-            ['title' => 'Komunitas Pendaki Kampus', 'type' => 'community', 'description' => 'Jelajah alam bersama teman mahasiswa.', 'provider_name' => 'Mapala', 'url' => 'https://mapala.demo.ac.id', 'target_dimensions' => ['social'], 'eligible_majors' => null, 'min_semester' => 1, 'max_semester' => 8, 'is_active' => true, 'deadline' => null],
-            ['title' => 'Bantuan Dana Darurat', 'type' => 'scholarship', 'description' => 'Dana tak terduga untuk kondisi mendesak.', 'provider_name' => 'Kemahasiswaan', 'url' => 'https://kemahasiswaan.demo.ac.id', 'target_dimensions' => ['financial'], 'eligible_majors' => null, 'min_semester' => 1, 'max_semester' => 8, 'is_active' => true, 'deadline' => null],
-            ['title' => 'Tutor Sebaya Sistem Informasi', 'type' => 'academic_support', 'description' => 'Belajar kelompok dengan kakak tingkat SI.', 'provider_name' => 'Hima SI', 'url' => 'https://himasi.demo.ac.id', 'target_dimensions' => ['academic'], 'eligible_majors' => ['Sistem Informasi'], 'min_semester' => 1, 'max_semester' => 4, 'is_active' => true, 'deadline' => null],
-            ['title' => 'Seminar Karir & CV', 'type' => 'career', 'description' => 'Membangun motivasi dan persiapan dunia kerja.', 'provider_name' => 'Pusat Karir', 'url' => 'https://karir.demo.ac.id/seminar', 'target_dimensions' => ['motivational'], 'eligible_majors' => null, 'min_semester' => 6, 'max_semester' => 8, 'is_active' => true, 'deadline' => now()->addDays(15)->toDateString()],
-            ['title' => 'Klub Olahraga Bersama', 'type' => 'community', 'description' => 'Pelepas penat dengan berolahraga rutin.', 'provider_name' => 'UKM Olahraga', 'url' => 'https://olahraga.demo.ac.id', 'target_dimensions' => ['social'], 'eligible_majors' => null, 'min_semester' => 1, 'max_semester' => 8, 'is_active' => true, 'deadline' => null],
-            ['title' => 'Bimbingan Skripsi Gratis', 'type' => 'academic_support', 'description' => 'Pendampingan metodologi penelitian.', 'provider_name' => 'Pusat Penelitian', 'url' => 'https://penelitian.demo.ac.id', 'target_dimensions' => ['academic', 'motivational'], 'eligible_majors' => null, 'min_semester' => 7, 'max_semester' => 14, 'is_active' => true, 'deadline' => null],
-            ['title' => 'Workspace Belajar AI (Pelajarin.ai)', 'type' => 'academic_support', 'description' => 'Platform belajar AI untuk mengubah materi kuliah (PDF/Video) menjadi kuis dan flashcard interaktif.', 'provider_name' => 'Pelajarin.ai', 'url' => 'https://pelajarin.ai/', 'target_dimensions' => ['academic'], 'eligible_majors' => null, 'min_semester' => 1, 'max_semester' => 14, 'is_active' => true, 'deadline' => null],
-        ];
+        // Demo Workspace Data
+        $note = $user->notes()->create([
+            'title' => 'Dasar Rekayasa Perangkat Lunak',
+            'content' => 'Rekayasa perangkat lunak adalah disiplin ilmu yang membahas semua aspek produksi perangkat lunak, mulai dari tahap awal spesifikasi sistem sampai pemeliharaan sistem setelah digunakan.',
+            'course_name' => 'RPL'
+        ]);
 
-        foreach ($resources as $res) {
-            \App\Models\Resource::updateOrCreate(['title' => $res['title']], $res);
-        }
+        $deck = $user->flashcardDecks()->create([
+            'name' => 'Flashcard RPL',
+            'source_note_id' => $note->id
+        ]);
+
+        $deck->flashcards()->createMany([
+            ['question' => 'Apa itu Rekayasa Perangkat Lunak?', 'answer' => 'Disiplin ilmu yang membahas aspek produksi PL.', 'is_memorized' => true],
+            ['question' => 'Kapan tahap akhir RPL?', 'answer' => 'Pemeliharaan sistem setelah digunakan.', 'is_memorized' => false],
+        ]);
+
+        $quiz = $user->quizzes()->create([
+            'title' => 'Quiz: Dasar RPL',
+            'source_note_id' => $note->id,
+            'total_questions' => 2,
+            'correct_count' => 1,
+            'score' => 50,
+            'completed_at' => now()
+        ]);
+
+        $quiz->questions()->create([
+            'question' => 'Apa fokus utama Rekayasa Perangkat Lunak?',
+            'option_a' => 'Hanya coding',
+            'option_b' => 'Semua aspek produksi perangkat lunak',
+            'option_c' => 'Perawatan perangkat keras',
+            'option_d' => 'Desain grafis',
+            'correct_option' => 'b',
+            'explanation' => 'RPL mencakup semua aspek.',
+            'user_answer' => 'b',
+            'is_correct' => true
+        ]);
+        
+        $quiz->questions()->create([
+            'question' => 'Tahap apa setelah spesifikasi?',
+            'option_a' => 'Pemeliharaan',
+            'option_b' => 'Desain',
+            'option_c' => 'Testing',
+            'option_d' => 'Deployment',
+            'correct_option' => 'b',
+            'explanation' => 'Desain sistem',
+            'user_answer' => 'a',
+            'is_correct' => false
+        ]);
+
+        $user->update([
+            'streak_count' => 3,
+            'last_active_at' => now()
+        ]);
     }
 }
