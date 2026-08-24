@@ -206,4 +206,89 @@ PROMPT;
 
         return $text;
     }
+
+    public function generateFlashcards(string $noteContent): array
+    {
+        $prompt = "Buatkan minimal 5 pasangan flashcard (pertanyaan dan jawaban) berdasarkan HANYA teks berikut. Jangan menambahkan informasi yang tidak ada di teks.\n\n"
+            . "Output HANYA dalam format JSON array berisi object dengan key 'question' dan 'answer' tanpa markdown formatting apapun.\n\n"
+            . "Teks:\n" . $noteContent;
+
+        try {
+            $apiKey = config('services.gemini.api_key');
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->timeout(10)->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}", [
+                'contents' => [
+                    [
+                        'parts' => [
+                            ['text' => $prompt]
+                        ]
+                    ]
+                ],
+                'generationConfig' => [
+                    'temperature' => 0.2,
+                ]
+            ]);
+
+            if ($response->successful()) {
+                $result = $response->json();
+                $text = $result['candidates'][0]['content']['parts'][0]['text'] ?? '';
+                
+                // Bersihkan potensi markdown ```json ... ```
+                $text = preg_replace('/```json/i', '', $text);
+                $text = preg_replace('/```/', '', $text);
+                
+                $flashcards = json_decode(trim($text), true);
+                if (is_array($flashcards)) {
+                    return $flashcards;
+                }
+            }
+            return [];
+        } catch (\Exception $e) {
+            Log::error('Gemini generateFlashcards error: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function generateQuiz(string $sourceContent, int $count = 5): array
+    {
+        $prompt = "Buatkan {$count} soal pilihan ganda (A, B, C, D) beserta jawaban benar dan pembahasan singkat berdasarkan HANYA teks berikut. Jangan menambahkan informasi yang tidak ada di teks.\n\n"
+            . "Output HANYA dalam format JSON array berisi object dengan struktur: { \"question\": \"...\", \"option_a\": \"...\", \"option_b\": \"...\", \"option_c\": \"...\", \"option_d\": \"...\", \"correct_option\": \"a|b|c|d\", \"explanation\": \"...\" } tanpa markdown formatting apapun.\n\n"
+            . "Teks:\n" . $sourceContent;
+
+        try {
+            $apiKey = config('services.gemini.api_key');
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->timeout(15)->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}", [
+                'contents' => [
+                    [
+                        'parts' => [
+                            ['text' => $prompt]
+                        ]
+                    ]
+                ],
+                'generationConfig' => [
+                    'temperature' => 0.2,
+                ]
+            ]);
+
+            if ($response->successful()) {
+                $result = $response->json();
+                $text = $result['candidates'][0]['content']['parts'][0]['text'] ?? '';
+                
+                $text = preg_replace('/```json/i', '', $text);
+                $text = preg_replace('/```/', '', $text);
+                
+                $quiz = json_decode(trim($text), true);
+                if (is_array($quiz)) {
+                    return $quiz;
+                }
+            }
+            return [];
+        } catch (\Exception $e) {
+            Log::error('Gemini generateQuiz error: ' . $e->getMessage());
+            return [];
+        }
+    }
 }
