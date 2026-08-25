@@ -96,9 +96,9 @@
 
             </div>
             
-            <div class="hidden md:flex items-center">
+            <a class="hidden md:flex items-center" href="{{ route('login') }}">
                 <button :class="scrolled ? 'bg-[#2D4A34] text-white hover:bg-[#1e382b]' : 'bg-white/10 text-white hover:bg-white/20'" class="py-2 px-6 rounded-xl font-semibold text-[14px] transition-all duration-300"> Masuk </button>
-            </div>
+            </a>
 
             <button @click="mobileOpen = !mobileOpen" class="md:hidden p-2 rounded-lg focus:outline-none" :class="scrolled ? 'text-gray-800' : 'text-white'">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -7,7 +7,7 @@
     </style>
 
     <div class="text-center max-w-2xl mx-auto">
-        <span class="text-xs font-bold tracking-widest text-[#2D4A34] uppercase px-4 py-1.5 bg-[#EAF5ED] rounded-full border border-emerald-100 inline-block">
+        <span class="text-xs font-bold tracking-widest text-[#2D4A34] uppercase px-4 py-1.5 inline-block">
             TENTANG TETAPKULIAH
         </span>
         <h2 class="text-3xl md:text-4xl font-bold text-[#2D4A34] leading-tight mt-4">

@@ -1,7 +1,7 @@
 <section class="py-20 px-6 bg-white overflow-hidden" id="process">
     <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
         <div class="lg:col-span-5 lg:sticky space-y-6">
-            <span class="text-[11px] font-extrabold tracking-widest text-[#2D4A34] uppercase px-3.5 py-1.5 bg-emerald-50/60 rounded-md border border-emerald-800/10 inline-block">
+            <span class="text-[11px] font-extrabold tracking-widest text-[#2D4A34] uppercase px-3.5 py-1.5 inline-block">
                 Proses
             </span>
             <h2 class="text-3xl md:text-[32px] lg:text-4xl font-bold text-[#2D4A34] leading-tight">
@@ -24,7 +24,7 @@
             
             <div class="relative z-10 grid grid-cols-1 sm:grid-cols-12 gap-6 items-start group">
                 <div class="sm:col-span-2 flex justify-start sm:justify-center">
-                    <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-[#FCFCFA] border border-[#2D4A34]/15 text-[#2D4A34] flex items-center justify-center font-bold text-lg sm:text-xl shadow-[0_8px_20px_rgb(45,74,52,0.02)] group-hover:bg-[#2D4A34] group-hover:text-white group-hover:border-[#2D4A34] transition-all duration-500">
+                    <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-[#FCFCFA] text-[#2D4A34] flex items-center justify-center font-bold text-lg sm:text-xl shadow-[0_8px_20px_rgb(45,74,52,0.02)] group-hover:ml-3 group-hover:bg-[#2D4A34] group-hover:text-white group-hover:border-[#2D4A34] transition-all duration-500">
                         01
                     </div>
                 </div>
@@ -41,7 +41,7 @@
 
             <div class="relative z-10 grid grid-cols-1 sm:grid-cols-12 gap-6 items-start group">
                 <div class="sm:col-span-2 flex justify-start sm:justify-center">
-                    <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-[#FCFCFA] border border-[#2D4A34]/15 text-[#2D4A34] flex items-center justify-center font-bold text-lg sm:text-xl shadow-[0_8px_20px_rgb(45,74,52,0.02)] group-hover:bg-[#2D4A34] group-hover:text-white group-hover:border-[#2D4A34] transition-all duration-500">
+                    <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-[#FCFCFA] group-hover:ml-3  text-[#2D4A34] flex items-center justify-center font-bold text-lg sm:text-xl shadow-[0_8px_20px_rgb(45,74,52,0.02)] group-hover:bg-[#2D4A34] group-hover:text-white group-hover:border-[#2D4A34] transition-all duration-500">
                         02
                     </div>
                 </div>
@@ -58,7 +58,7 @@
 
             <div class="relative z-10 grid grid-cols-1 sm:grid-cols-12 gap-6 items-start group">
                 <div class="sm:col-span-2 flex justify-start sm:justify-center">
-                    <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-[#FCFCFA] border border-[#2D4A34]/15 text-[#2D4A34] flex items-center justify-center font-bold text-lg sm:text-xl shadow-[0_8px_20px_rgb(45,74,52,0.02)] group-hover:bg-[#2D4A34] group-hover:text-white group-hover:border-[#2D4A34] transition-all duration-500">
+                    <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-[#FCFCFA] group-hover:ml-3  text-[#2D4A34] flex items-center justify-center font-bold text-lg sm:text-xl shadow-[0_8px_20px_rgb(45,74,52,0.02)] group-hover:bg-[#2D4A34] group-hover:text-white group-hover:border-[#2D4A34] transition-all duration-500">
                         03
                     </div>
                 </div>
