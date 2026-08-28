@@ -59,23 +59,44 @@
                 
                 <p class="text-xs text-emerald-200/70 mb-8">Buat akun baru untuk memulai perjalananmu.</p>
 
-                <form action="#" method="POST" class="space-y-5">
+                <form action="{{ route('register') }}" method="POST" class="space-y-4">
                     @csrf
                     
+                    @if ($errors->any())
+                        <div class="bg-red-500/20 border border-red-500/50 text-red-200 text-xs p-3.5 rounded-2xl">
+                            {{ $errors->first() }}
+                        </div>
+                    @endif
+
                     <div class="space-y-1.5">
-                        <label class="block text-[10px] font-bold tracking-widest uppercase text-emerald-200/80">Full Name</label>
-                        <input type="text" name="name" x-model="form.name" required class="w-full bg-white text-zinc-800 text-sm px-4 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-400 shadow-inner">
+                        <label class="block text-[10px] font-bold tracking-widest uppercase text-emerald-200/80">Nama Lengkap</label>
+                        <input type="text" name="name" value="{{ old('name') }}" required class="w-full bg-white text-zinc-800 text-sm px-4 py-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-400 shadow-inner">
                     </div>
 
                     <div class="space-y-1.5">
                         <label class="block text-[10px] font-bold tracking-widest uppercase text-emerald-200/80">E-Mail</label>
-                        <input type="email" name="email" x-model="form.email" required class="w-full bg-white text-zinc-800 text-sm px-4 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-400 shadow-inner">
+                        <input type="email" name="email" value="{{ old('email') }}" required class="w-full bg-white text-zinc-800 text-sm px-4 py-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-400 shadow-inner">
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="space-y-1.5">
+                            <label class="block text-[10px] font-bold tracking-widest uppercase text-emerald-200/80">Semester</label>
+                            <input type="number" name="semester" min="1" max="14" value="{{ old('semester', 1) }}" required class="w-full bg-white text-zinc-800 text-sm px-3 py-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-400 shadow-inner text-center">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[10px] font-bold tracking-widest uppercase text-emerald-200/80">Fakultas</label>
+                            <input type="text" name="faculty" value="{{ old('faculty', 'Teknik') }}" required class="w-full bg-white text-zinc-800 text-sm px-3 py-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-400 shadow-inner">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[10px] font-bold tracking-widest uppercase text-emerald-200/80">Prodi / Major</label>
+                            <input type="text" name="major" value="{{ old('major', 'Informatika') }}" required class="w-full bg-white text-zinc-800 text-sm px-3 py-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-400 shadow-inner">
+                        </div>
                     </div>
 
                     <div class="space-y-1.5 relative">
                         <label class="block text-[10px] font-bold tracking-widest uppercase text-emerald-200/80">Password</label>
                         <div class="relative">
-                            <input :type="showPassword ? 'text' : 'password'" name="password" x-model="form.password" required class="w-full bg-white text-zinc-800 text-sm px-4 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-400 shadow-inner pr-12">
+                            <input :type="showPassword ? 'text' : 'password'" name="password" required class="w-full bg-white text-zinc-800 text-sm px-4 py-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-400 shadow-inner pr-12">
                             
                             <button type="button" @click="showPassword = !showPassword" class="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-800 focus:outline-none">
                                 <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
