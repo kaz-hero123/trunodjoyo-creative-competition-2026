@@ -6,7 +6,7 @@
     <title> TetapKuliah </title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -53,7 +53,7 @@
         <div class="flex justify-between items-center w-full">
             <div class="flex items-center gap-2">
                 <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-9 w-9 sm:h-10 sm:w-10">
-                <span :class="scrolled ? 'text-[#2D4A34]' : 'text-white'" class="text-xl sm:text-2xl font-black ml-2 transition-colors duration-300">TetapKuliah</span>
+                <span :class="scrolled ? 'text-[#2D4A34]' : 'text-white'" class="text-xl sm:text-2xl font-bold ml-2 transition-colors duration-300">TetapKuliah</span>
             </div>
             
             <div id="nav-links" class="hidden md:flex items-center gap-10 font-semibold text-[14px]">

@@ -7,7 +7,7 @@
     
     <div class="relative z-10 text-center px-6 max-w-4xl mx-auto flex flex-col items-center">
 
-        <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-6 mt-5 md:mt-0 tracking-tight">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6 mt-5 md:mt-0 tracking-tight">
             Pahami Posisimu, <br class="hidden md:block">
             <span class="italic font-serif text-emerald-300">Temukan</span> Langkahmu.
         </h1>

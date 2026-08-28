@@ -1,7 +1,7 @@
 <section class="py-20 px-6 bg-white overflow-hidden" id="process">
     <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
         <div class="lg:col-span-5 lg:sticky space-y-6">
-            <span class="text-[11px] font-extrabold tracking-widest text-[#2D4A34] uppercase px-3.5 py-1.5 inline-block">
+            <span class="text-[11px] font-bold tracking-widest text-[#2D4A34] uppercase px-3.5 py-1.5 inline-block">
                 Proses
             </span>
             <h2 class="text-3xl md:text-[32px] lg:text-4xl font-bold text-[#2D4A34] leading-tight">

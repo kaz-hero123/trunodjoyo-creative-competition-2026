@@ -25,7 +25,7 @@
 
 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 py-6 px-1">
     <div class="space-y-2 max-w-xl">
-        <h1 class="text-2xl sm:text-3xl md:text-[32px] font-extrabold text-gray-900 tracking-tight leading-tight">
+        <h1 class="text-2xl sm:text-3xl md:text-[32px] font-bold text-gray-900 tracking-tight leading-tight">
             Halo, <span class="text-[#2D4A34]">{{ $displayName }}</span>.
         </h1>
         <p class="text-sm sm:text-base text-gray-500 font-normal leading-relaxed">
