@@ -13,6 +13,6 @@ class StudentDashboardController extends Controller {
         $notesCount = $user->notes()->count();
         $recentQuizzes = $user->quizzes()->latest()->take(3)->get();
         
-        return view('student.dashboard', compact('latestAssessment', 'assessmentHistory', 'nextCheckInAt', 'streak', 'notesCount', 'recentQuizzes'));
+        return view('student.dashboard.dashboard', compact('latestAssessment', 'assessmentHistory', 'nextCheckInAt', 'streak', 'notesCount', 'recentQuizzes'));
     }
 }
