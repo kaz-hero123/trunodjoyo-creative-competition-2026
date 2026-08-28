@@ -75,7 +75,7 @@ class AssessmentController extends Controller {
         
         $chatHistory = AssessmentChat::where('assessment_id', $assessment->id)->orderBy('created_at')->get()->toArray();
         $matches = []; // Dummy array to prevent undefined variable error in legacy view
-        return view('student.results', compact('assessment', 'previousAssessment', 'chatHistory', 'matches'));
+        return view('student.results.results', compact('assessment', 'previousAssessment', 'chatHistory', 'matches'));
     }
 
     public function chat(StoreAssessmentChatRequest $request, Assessment $assessment, GeminiService $geminiService) {
