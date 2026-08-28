@@ -1,7 +1,9 @@
 <section id="home" class="relative w-full h-[90vh] min-h-[600px] flex items-center justify-center overflow-hidden">
-    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('{{ asset('img/landing/hero.png') }}');"></div>
-    <div class="absolute inset-0 bg-[#17331F]/70 mix-blend-multiply"></div> 
-    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#17331F]/50 to-white"></div>
+    <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover">
+        <source src="{{ asset('img/particle/kacaw.mp4') }}" type="video/mp4">
+    </video>
+    <div class="absolute inset-0 bg-[#17331F]/30 mix-blend-multiply"></div> 
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#17331F]/10 to-white"></div>
     
     <div class="relative z-10 text-center px-6 max-w-4xl mx-auto flex flex-col items-center">
 
@@ -15,7 +17,7 @@
         </p>
         
         <div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-            <a href="#" class="w-full sm:w-auto px-8 py-3.5 bg-[#2E503F] text-white font-bold rounded-full hover:bg-emerald-800 hover:shadow-lg hover:shadow-emerald-950/20 transform hover:-translate-y-0.5 transition-all duration-300">
+            <a href="{{ auth()->check() ? route('dashboard') : route('register') }}" class="w-full sm:w-auto px-8 py-3.5 bg-[#2E503F] text-white font-bold rounded-full hover:bg-emerald-800 hover:shadow-lg hover:shadow-emerald-950/20 transform hover:-translate-y-0.5 transition-all duration-300">
                 Mulai Check-In Sekarang
             </a>
             

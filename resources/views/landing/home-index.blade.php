@@ -147,7 +147,9 @@
             </a>
 
             <div class="pt-2 border-t border-gray-100">
-                <button class="w-full bg-[#2D4A34] text-white py-2.5 rounded-xl font-semibold text-sm"> Masuk </button>
+                <a href="{{ route('login') }}" class="block w-full">
+                    <button class="w-full bg-[#2D4A34] text-white py-2.5 rounded-xl font-semibold text-sm"> Masuk </button>
+                </a>
             </div>
         </div>
     </nav>    

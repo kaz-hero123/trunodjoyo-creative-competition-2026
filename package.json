@@ -15,5 +15,9 @@
     },
     "optionalDependencies": {
         "@laravel/multiplex": "^0.4.1"
+    },
+    "dependencies": {
+        "lucide": "^1.33.0",
+        "lucide-react": "^1.33.0"
     }
 }
