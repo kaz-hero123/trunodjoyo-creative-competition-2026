@@ -127,37 +127,100 @@
             </div>
         </div>
 
-        {{-- Check-In Lock / Ready Card --}}
-        <div class="bg-[#F4F4EF] border border-gray-200/70 rounded-xl p-6 sm:p-7 text-center flex flex-col items-center justify-center min-h-[200px] flex-grow">
-            @if($isLocked)
-                <div class="w-10 h-10 rounded-lg bg-gray-200/60 flex items-center justify-center mb-3 text-gray-500">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+        <div class="bg-[#F4F4EF] border border-gray-200/70 rounded-xl p-5 sm:p-6 flex flex-col justify-between min-h-[240px] flex-grow shadow-xs">
+            <div>
+                <div class="flex items-center justify-between mb-4 border-b border-gray-200/80 pb-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-lg bg-[#2D4A34]/10 text-[#2D4A34] flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-bold text-gray-900 tracking-tight">Riwayat Check-In</h4>
+                            <p class="text-[11px] text-gray-500">Hasil evaluasi berkala</p>
+                        </div>
+                    </div>
+
+                    @if(isset($assessmentHistory) && $assessmentHistory->count() > 0)
+                        <span class="px-2.5 py-0.5 text-[11px] font-semibold bg-emerald-100 text-[#2D4A34] rounded-full">
+                            {{ $assessmentHistory->count() }} Sesi
+                        </span>
+                    @endif
                 </div>
 
-                <h4 class="text-base font-bold text-gray-800 mb-1.5">Check-In Terkunci</h4>
+                @if(isset($assessmentHistory) && $assessmentHistory->count() > 0)
+                    <div class="space-y-2.5 max-h-[220px] overflow-y-auto pr-1">
+                        @foreach($assessmentHistory as $item)
+                            <a href="{{ route('results.show', $item) }}" 
+                               class="group flex items-center justify-between p-3 rounded-lg bg-white border border-gray-200/60 hover:border-[#2D4A34]/40 hover:shadow-xs transition-all duration-150">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-md bg-[#FAF9F5] group-hover:bg-[#2D4A34]/10 text-gray-500 group-hover:text-[#2D4A34] flex items-center justify-center transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 012-2h2a2 2 0 012 2v6m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs font-bold text-gray-800 group-hover:text-[#2D4A34] transition-colors">
+                                                {{ $item->created_at->format('d M Y') }}
+                                            </span>
+                                            @if($item->is_baseline)
+                                                <span class="text-[10px] px-1.5 py-0.2 bg-sky-100 text-sky-800 rounded font-medium">Baseline</span>
+                                            @endif
+                                        </div>
+                                        <p class="text-[11px] text-gray-500">
+                                            Skor Resiliensi: <span class="font-semibold text-gray-700">{{ number_format($item->total_resilience_score, 0) }}</span>
+                                        </p>
+                                    </div>
+                                </div>
 
-                <p class="text-xs text-gray-500 font-normal max-w-[210px] leading-relaxed">
-                    Gunakan waktu ini untuk mempraktikkan rekomendasi sebelumnya.
-                </p>
-            @else
-                <div class="w-10 h-10 rounded-lg bg-emerald-100 text-[#2D4A34] flex items-center justify-center mb-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
+                                <div class="flex items-center text-xs font-semibold text-[#2D4A34] gap-1 group-hover:translate-x-0.5 transition-transform">
+                                    <span>Lihat</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </div>
+                            </a>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="py-6 text-center">
+                        <div class="w-10 h-10 rounded-lg bg-gray-200/60 flex items-center justify-center mx-auto mb-2 text-gray-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <p class="text-xs text-gray-500 font-normal leading-relaxed">
+                            Belum ada riwayat check-in.
+                        </p>
+                    </div>
+                @endif
+            </div>
 
-                <h4 class="text-base font-bold text-gray-800 mb-1.5">Check-In Siap!</h4>
-
-                <p class="text-xs text-gray-500 font-normal max-w-[210px] leading-relaxed mb-4">
-                    Refleksikan kondisi belajar dan kesehatan mentalmu minggu ini.
-                </p>
-
-                <a href="{{ route('check-in.create') }}" class="px-5 py-2 bg-[#2D4A34] text-white text-xs font-semibold rounded-lg hover:bg-[#1f3525] transition-colors shadow-xs">
-                    Mulai Sekarang
-                </a>
-            @endif
+            <div class="mt-4 pt-3 border-t border-gray-200/80">
+                @if($isLocked)
+                    <div class="flex items-center justify-between text-xs text-gray-500 bg-white/70 px-3 py-2 rounded-lg border border-gray-200/50">
+                        <span class="flex items-center gap-1.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>Check-In Berikutnya</span>
+                        </span>
+                        <span class="font-bold text-gray-700">
+                            {{ \Carbon\Carbon::parse($nextCheckInAt)->format('d M Y') }}
+                        </span>
+                    </div>
+                @else
+                    <a href="{{ route('check-in.create') }}" 
+                       class="w-full py-2 px-4 bg-[#2D4A34] text-white text-xs font-semibold rounded-lg hover:bg-[#1f3525] transition-colors flex items-center justify-center gap-1.5 shadow-xs">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                        </svg>
+                        <span>Mulai Check-In Baru</span>
+                    </a>
+                @endif
+            </div>
         </div>
 
     </div>
