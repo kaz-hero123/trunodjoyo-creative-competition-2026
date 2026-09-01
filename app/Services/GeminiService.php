@@ -204,9 +204,10 @@ PROMPT;
 
         try {
             $apiKey = config('services.gemini.api_key');
+            $model = config('services.gemini.model', 'gemini-3.1-flash-lite');
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
-            ])->timeout(10)->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}", [
+            ])->timeout(10)->post("https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}", [
                 'contents' => [
                     [
                         'parts' => [
@@ -246,9 +247,10 @@ PROMPT;
 
         try {
             $apiKey = config('services.gemini.api_key');
+            $model = config('services.gemini.model', 'gemini-3.1-flash-lite');
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
-            ])->timeout(15)->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}", [
+            ])->timeout(15)->post("https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}", [
                 'contents' => [
                     [
                         'parts' => [
